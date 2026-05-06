@@ -74,3 +74,11 @@ def test_mismatch_shows_both_values(result):
     report = format_report(result)
     assert "localhost" in report
     assert "prod.host" in report
+
+
+def test_print_report_default_writes_to_stdout(result, capsys):
+    """Verify print_report writes to stdout when no file argument is given."""
+    print_report(result)
+    captured = capsys.readouterr()
+    assert "dev" in captured.out
+    assert len(captured.out) > 0
