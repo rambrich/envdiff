@@ -73,7 +73,18 @@ def validate_env(
             continue
 
         if rule.pattern is not None:
-            if not re.fullmatch(rule.pattern, value):
+            try:
+                matched = re.fullmatch(rule.pattern, value)
+            except re.error as exc:
+                result.add_violation(
+                    key=rule.key,
+                    message=(
+                        f"Invalid regex pattern '{rule.pattern}' for key '{rule.key}': {exc}."
+                    ),
+                )
+                continue
+
+            if not matched:
                 result.add_violation(
                     key=rule.key,
                     message=(
