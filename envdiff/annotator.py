@@ -1,7 +1,7 @@
 """Annotator module: attach human-readable annotations/descriptions to diff entries."""
 
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from envdiff.differ import DiffEntry, DiffResult, DiffStatus
 
@@ -28,6 +28,10 @@ class AnnotatedResult:
     @property
     def has_issues(self) -> bool:
         return any(e.entry.status != DiffStatus.MATCH for e in self.entries)
+
+    def issues(self) -> List["AnnotatedEntry"]:
+        """Return only the entries that are not a clean match."""
+        return [e for e in self.entries if e.entry.status != DiffStatus.MATCH]
 
 
 _DEFAULT_ANNOTATIONS: Dict[DiffStatus, str] = {
