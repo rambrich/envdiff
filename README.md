@@ -52,6 +52,12 @@ Use `--keys-only` to ignore values and only check for missing keys:
 envdiff .env.development .env.production --keys-only
 ```
 
+Use `--output` to write results to a file instead of stdout:
+
+```bash
+envdiff .env.development .env.production --output report.txt
+```
+
 ---
 
 ## Options
@@ -60,7 +66,18 @@ envdiff .env.development .env.production --keys-only
 |------|-------------|
 | `--keys-only` | Only check for missing keys, ignore value differences |
 | `--quiet` | Suppress output, exit with non-zero code if differences found |
+| `--output <file>` | Write diff results to a file instead of stdout |
 | `--version` | Show the current version |
+
+---
+
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | No differences found |
+| `1` | Differences detected |
+| `2` | Error (e.g. file not found, invalid format) |
 
 ---
 
