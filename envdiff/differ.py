@@ -48,6 +48,16 @@ class DiffResult:
     def mismatched(self) -> List[DiffEntry]:
         return [e for e in self.entries if e.status == DiffStatus.VALUE_MISMATCH]
 
+    def summary(self) -> str:
+        """Return a human-readable summary of the diff result."""
+        lines = [
+            f"Diff: {self.source_name} -> {self.target_name}",
+            f"  Missing in {self.target_name}: {len(self.missing_in_target)}",
+            f"  Missing in {self.source_name}: {len(self.missing_in_source)}",
+            f"  Value mismatches: {len(self.mismatched)}",
+        ]
+        return "\n".join(lines)
+
 
 def diff_envs(
     source: Dict[str, str],
