@@ -54,6 +54,9 @@ def create_archive(env_paths: List[str], output_path: str) -> ArchiveResult:
 
 def load_archive(archive_path: str) -> Dict[str, EnvSnapshot]:
     """Load all snapshots from a zip archive keyed by snapshot name."""
+    if not Path(archive_path).exists():
+        raise FileNotFoundError(f"Archive not found: {archive_path}")
+
     snapshots: Dict[str, EnvSnapshot] = {}
     with zipfile.ZipFile(archive_path, "r") as zf:
         for name in zf.namelist():
@@ -63,3 +66,19 @@ def load_archive(archive_path: str) -> Dict[str, EnvSnapshot]:
             snap = EnvSnapshot.from_dict(data)
             snapshots[snap.name] = snap
     return snapshots
+
+
+def read_manifest(archive_path: str) -> ArchiveManifest:
+    """Read and return the manifest from an existing zip archive.
+
+    Raises ``FileNotFoundError`` if the archive does not exist and
+    ``KeyError`` if the archive contains no manifest entry.
+    """
+    if not Path(archive_path).exists():
+        raise FileNotFoundError(f"Archive not found: {archive_path}")
+
+    with zipfile.ZipFile(archive_path, "r") as zf:
+        if "manifest.json" not in zf.namelist():
+            raise KeyError(f"No manifest.json found in archive: {archive_path}")
+        data = json.loads(zf.read("manifest.json"))
+    return ArchiveManifest.from_dict(data)
