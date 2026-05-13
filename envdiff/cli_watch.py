@@ -23,6 +23,19 @@ def _on_change(event: WatchEvent, *, quiet: bool) -> None:
     print()
 
 
+def _validate_files(source: Path, target: Path) -> str | None:
+    """Validate that both source and target files exist.
+
+    Returns an error message string if validation fails, or ``None`` if both
+    files are present and readable.
+    """
+    if not source.exists():
+        return f"error: source file not found: {source}"
+    if not target.exists():
+        return f"error: target file not found: {target}"
+    return None
+
+
 def build_watch_parser(parent: argparse._SubParsersAction | None = None) -> argparse.ArgumentParser:  # type: ignore[type-arg]
     kwargs: dict = dict(
         description="Watch .env files and print a diff whenever they change."
@@ -53,11 +66,9 @@ def main(argv: list[str] | None = None) -> int:
     parser = build_watch_parser()
     args = parser.parse_args(argv)
 
-    if not args.source.exists():
-        print(f"error: source file not found: {args.source}", file=sys.stderr)
-        return 2
-    if not args.target.exists():
-        print(f"error: target file not found: {args.target}", file=sys.stderr)
+    error = _validate_files(args.source, args.target)
+    if error is not None:
+        print(error, file=sys.stderr)
         return 2
 
     print(f"Watching {args.target} (against {args.source}) — press Ctrl+C to stop.")
