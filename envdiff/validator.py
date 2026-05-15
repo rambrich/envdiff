@@ -43,6 +43,10 @@ class ValidationResult:
     def add_violation(self, key: str, message: str, value: Optional[str] = None) -> None:
         self.violations.append(ValidationViolation(key=key, message=message, value=value))
 
+    def violation_keys(self) -> List[str]:
+        """Return a list of keys that have at least one violation."""
+        return [v.key for v in self.violations]
+
 
 def validate_env(
     env: Dict[str, str],
